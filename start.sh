@@ -1,18 +1,16 @@
-
 #!/bin/bash
-
 set -e
 
-# Start DBus
+# Start system DBus
 mkdir -p /run/dbus
 dbus-daemon --system --fork
 
-# Start SSH daemon
-/usr/bin/sshd
+# Clean old VNC locks (important for Docker restarts)
+rm -rf /tmp/.X*-lock /tmp/.X11-unix/X*
 
-# Prepare X11 socket directory
-mkdir -p /tmp/.X11-unix
-chmod 1777 /tmp/.X11-unix
+# Start VNC server (display :0 → port 5900)
+vncserver :0 -geometry 1360x768 -localhost
 
-# Start XRDP
-/usr/bin/xrdp --nodaemon
+# Start noVNC
+cd /noVNC-1.2.0
+./utils/launch.sh --vnc localhost:5900 --listen 8900
