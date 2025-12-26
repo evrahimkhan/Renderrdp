@@ -5,11 +5,14 @@ set -e
 mkdir -p /run/dbus
 dbus-daemon --system --fork
 
-# Clean old VNC locks (important for Docker restarts)
+# Clean old VNC locks (important for restarts)
 rm -rf /tmp/.X*-lock /tmp/.X11-unix/X*
 
-# Start VNC server (display :0 → port 5900)
-vncserver :0 -geometry 1360x768 -localhost
+# Set VNC geometry (TigerVNC-compatible)
+export VNC_RESOLUTION=1360x768
+
+# Start TigerVNC (NEW SYNTAX – display only)
+vncserver :0
 
 # Start noVNC
 cd /noVNC-1.2.0
