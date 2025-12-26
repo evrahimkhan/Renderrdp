@@ -1,15 +1,22 @@
 #!/bin/bash
 set -e
 
-# Start system DBus
+# DBus (system bus)
 mkdir -p /run/dbus
 dbus-daemon --system --fork
 
-# Clean old VNC locks (important for container restarts)
-rm -rf /tmp/.X*-lock /tmp/.X11-unix/X*
+# Fix Xauthority warning (not fatal but clean)
+touch /root/.Xauthority
 
-# Start TigerVNC (Ubuntu supports geometry flags)
-vncserver :0 -geometry 1360x768 -localhost
+# Clean stale X locks
+rm -rf /tmp/.X*-lock /tmp/.X11-unix
+
+# Ensure runtime dir
+mkdir -p /tmp/runtime-root
+chmod 700 /tmp/runtime-root
+
+# Start TigerVNC (DO NOT use -localhost on Render)
+vncserver :0 -geometry 1360x768
 
 # Start noVNC
 cd /noVNC-1.2.0
