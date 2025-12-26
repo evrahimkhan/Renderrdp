@@ -5,14 +5,11 @@ set -e
 mkdir -p /run/dbus
 dbus-daemon --system --fork
 
-# Clean old VNC locks (important for restarts)
+# Clean old VNC locks (important for container restarts)
 rm -rf /tmp/.X*-lock /tmp/.X11-unix/X*
 
-# Set VNC geometry (TigerVNC-compatible)
-export VNC_RESOLUTION=1360x768
-
-# Start TigerVNC (NEW SYNTAX – display only)
-vncserver :0
+# Start TigerVNC (Ubuntu supports geometry flags)
+vncserver :0 -geometry 1360x768 -localhost
 
 # Start noVNC
 cd /noVNC-1.2.0
