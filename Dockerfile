@@ -1,6 +1,6 @@
 FROM archlinux:latest
 
-# Update system and install required packages
+# Update system & install packages
 RUN pacman -Syu --noconfirm \
     wine \
     qemu-base \
@@ -17,19 +17,24 @@ RUN pacman -Syu --noconfirm \
     wget \
     sudo \
     net-tools \
-    xorg-xinit
+    xorg-xinit \
+    openssh \
+    xrdp
 
-# Download and extract noVNC
+# Generate SSH host keys
+RUN ssh-keygen -A
+
+# Download & extract noVNC (FIXED – no mv)
+WORKDIR /
 RUN wget https://github.com/novnc/noVNC/archive/refs/tags/v1.2.0.tar.gz && \
     tar -xvf v1.2.0.tar.gz && \
-    mv noVNC-1.2.0 /noVNC-1.2.0
+    rm v1.2.0.tar.gz
 
-# Create VNC config
+# VNC setup
 RUN mkdir -p /root/.vnc && \
     echo '274600' | vncpasswd -f > /root/.vnc/passwd && \
     chmod 600 /root/.vnc/passwd
 
-# VNC startup script
 RUN echo '#!/bin/sh' > /root/.vnc/xstartup && \
     echo 'export MOZ_FAKE_NO_SANDBOX=1' >> /root/.vnc/xstartup && \
     echo 'dbus-launch xfce4-session &' >> /root/.vnc/xstartup && \
@@ -45,5 +50,4 @@ RUN echo '#!/bin/bash' > /luo.sh && \
     chmod 755 /luo.sh
 
 EXPOSE 8900
-
 CMD ["/luo.sh"]
