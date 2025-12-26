@@ -1,15 +1,16 @@
+
 #!/bin/bash
 
 set -e
 
-# Start DBus (Arch way)
+# Start DBus
 mkdir -p /run/dbus
 dbus-daemon --system --fork
 
-# Start SSH (Arch uses sshd, not "service ssh")
+# Start SSH daemon
 /usr/bin/sshd
 
-# Prepare X11 directory
+# Prepare X11 socket directory
 mkdir -p /tmp/.X11-unix
 chmod 1777 /tmp/.X11-unix
 
